@@ -1,0 +1,11 @@
+name: Track Clones
+
+on: push
+
+jobs:
+  test: 
+    runs-on: ubuntu-latest
+    steps: 
+      - run: echo $REPO
+        env: 
+          REPO: ${{ github.repository }}
