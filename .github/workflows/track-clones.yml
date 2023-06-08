@@ -9,3 +9,5 @@ jobs:
       - run: echo $REPO
         env: 
           REPO: ${{ github.repository }}
+      - name: run test.py
+        run: python test.py j0ycehe/artoftheweb
