@@ -1,13 +1,19 @@
+from github import Github
 import os
 import argparse
-
-token = os.environ.get("SECRET_TOKEN")
 
 
 def main():
     args = parse_args()
     owner_name, repo_name = args.repo.split("/")
-    print(owner_name)
+    token = os.environ.get("SECRET_TOKEN")
+    g = Github(token)
+    user = g.get_user(owner_name)
+    repo = user.get(repo_name)
+
+    clones = repo.get_clones_traffic()
+    
+    print(clones["clones"])
 
 def parse_args():
     parser = argparse.ArgumentParser()
