@@ -9,5 +9,10 @@ jobs:
       - run: echo $REPO
         env: 
           REPO: ${{ github.repository }}
+      - uses: actions/checkout@v2
+      - name: Set up Python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
       - name: run test.py
-        run: python ${{ github.repository }} test.py j0ycehe/artoftheweb
+        run: python test.py j0ycehe/artoftheweb
