@@ -18,6 +18,7 @@ row = 0
 
 
 source = ColumnDataSource(df)
+
 curdoc().theme = 'light_minimal'
 
 p = figure(width=800, x_axis_type='datetime', toolbar_location="above")

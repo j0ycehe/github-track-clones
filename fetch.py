@@ -2,6 +2,8 @@ import os
 import pandas as pd
 from datetime import datetime as dt, date
 from github import Github
+import argparse
+
 
 # make sure to set environment variables
 token = os.environ.get("SECRET_TOKEN")
@@ -57,5 +59,25 @@ def clones_to_df(clones):
 def fetch_clones(repo):
     clones = repo.get_clones_traffic()
     return clones["clones"]
+
+# get username and repo name via command line input
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Requires the environment variables REPO and SECRET_TOKEN to be set."
+    )
+
+    parser.add_argument(
+        "repo",
+        metavar="REPOSITORY",
+        help="Owner and repository. Must contain a slash. "
+        "Example: owner/repository",
+        required=True
+    )
+
+    args = parser.parse_args()
+
+    owner_id, repo_id = args.repo.split("/")
+
+    return args
 
 main()
