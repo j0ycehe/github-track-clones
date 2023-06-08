@@ -8,8 +8,7 @@ def main():
     owner_name, repo_name = args.repo.split("/")
     token = os.environ.get("SECRET_TOKEN")
     g = Github(token)
-    user = g.get_user(owner_name)
-    repo = user.get(repo_name)
+    repo = g.get_repo(args.repo)
 
     clones = repo.get_clones_traffic()
     
