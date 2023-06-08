@@ -12,8 +12,7 @@ def parse_args():
         "repo",
         metavar="REPOSITORY",
         help="Owner and repository. Must contain a slash. "
-        "Example: owner/repository",
-        required=True
+        "Example: owner/repository"
     )
 
     args = parser.parse_args()
