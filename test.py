@@ -1,4 +1,8 @@
+import os
 import argparse
+
+token = os.environ.get("SECRET_TOKEN")
+
 
 def main():
     args = parse_args()

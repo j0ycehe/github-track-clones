@@ -15,4 +15,7 @@ jobs:
         with:
           python-version: 3.8
       - name: run test.py
+        env: 
+          SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
         run: python test.py j0ycehe/artoftheweb
+
