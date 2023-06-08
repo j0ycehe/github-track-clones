@@ -10,4 +10,4 @@ jobs:
         env: 
           REPO: ${{ github.repository }}
       - name: run test.py
-        run: python test.py j0ycehe/artoftheweb
+        run: python ${{ github.repository }} test.py j0ycehe/artoftheweb
