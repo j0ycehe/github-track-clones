@@ -7,6 +7,7 @@ def main():
     args = parse_args()
     owner_name, repo_name = args.repo.split("/")
     token = os.environ.get("SECRET_TOKEN")
+    print(token[0])
     g = Github(token)
     user = g.get_user(owner_name)
     repo = user.get(repo_name)
