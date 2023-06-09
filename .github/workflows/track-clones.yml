@@ -15,7 +15,9 @@ jobs:
         with:
           python-version: 3.8
       - name: Install dependencies
-        run: pip3 install PyGithub
+        run: |
+          pip3 install PyGithub
+          python -m pip install --upgrade pip pandas
       - name: run test.py
         env: 
           SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
