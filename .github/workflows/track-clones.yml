@@ -18,8 +18,14 @@ jobs:
         run: |
           pip3 install PyGithub
           python -m pip install --upgrade pip pandas
-      - name: run test.py
+      - name: Run fetch.py
         env: 
           SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
         run: python fetch.py j0ycehe/artoftheweb
+      - name: Commit download statistics
+        run: |
+          git config --global user.name 'j0ycehe'
+          git config --global user.email 'joycehe@sas.upenn.edu'
+          git commit -a -m 'Update download statistics'
+          git push
 
