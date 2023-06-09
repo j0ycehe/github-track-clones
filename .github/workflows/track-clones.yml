@@ -19,5 +19,5 @@ jobs:
       - name: run test.py
         env: 
           SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
-        run: python test.py j0ycehe/artoftheweb
+        run: python fetch.py j0ycehe/artoftheweb
 

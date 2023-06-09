@@ -4,29 +4,29 @@ from datetime import datetime as dt, date
 from github import Github
 import argparse
 
-
-# make sure to set environment variables
-token = os.environ.get("SECRET_TOKEN")
-username = os.environ.get("GH_USERNAME")
-repo_name = os.environ.get("REPO_NAME")
-
-g = Github(token)
-user = g.get_user(username)
-repo = user.get_repo(repo_name)
-
 # convert data frame to a csv file + output to directory
 def main():
+    args = parse_args()
+    token = os.environ.get("SECRET_TOKEN")
+    g = Github(token)
+    repo = g.get_repo(args.repo)
+
     df_clones = clones_to_df(fetch_clones(repo))
 
-    path = './clones.csv'
+    owner_name, repo_name = args.repo.split("/")
+
+    stats_dir = './download-stats'
+    if not os.path.exists(stats_dir):
+        os.mkdir(stats_dir)
+    
+    path = os.path.join(stats_dir, f"{owner_name}_{repo_name}_daily_clones.csv")
     
     if len(df_clones):
         df_latest_clones = df_clones.tail(1)
         last_download_date = df_clones.tail(1).index.date[0]
-        df_existing = pd.read_csv("clones.csv")        
 
         if not os.path.isfile(path):
-            df_clones.to_csv("clones.csv")
+            df_clones.to_csv(path)
 
         # if latest clone timestamp is not today's date, that means there were 
         # no clones today and we should just put 0 for "number of clones"
@@ -60,7 +60,7 @@ def fetch_clones(repo):
     clones = repo.get_clones_traffic()
     return clones["clones"]
 
-# get username and repo name via command line input
+# get owner name and repo name
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Requires the environment variables REPO and SECRET_TOKEN to be set."
@@ -70,14 +70,10 @@ def parse_args():
         "repo",
         metavar="REPOSITORY",
         help="Owner and repository. Must contain a slash. "
-        "Example: owner/repository",
-        required=True
+        "Example: owner/repository"
     )
 
     args = parser.parse_args()
-
-    owner_id, repo_id = args.repo.split("/")
-
     return args
 
 main()
