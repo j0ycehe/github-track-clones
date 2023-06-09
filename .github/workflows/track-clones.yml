@@ -26,6 +26,7 @@ jobs:
         run: |
           git config --global user.name 'j0ycehe'
           git config --global user.email 'joycehe@sas.upenn.edu'
+          git add -A
           git commit -a -m 'Update download statistics'
           git push
 
