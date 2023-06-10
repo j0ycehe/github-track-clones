@@ -28,13 +28,9 @@ def main():
         if not os.path.isfile(path):
             df_clones.to_csv(path)
 
-        # if latest clone timestamp is not today's date, that means there were 
-        # no clones today and we should just put 0 for "number of clones"
-        elif last_download_date != date.today():
-            df_todays_clones = pd.DataFrame(data=[0], index=pd.DatetimeIndex(data=[dt.now().replace(microsecond=0)], tz="UTC"))
-            df_todays_clones.to_csv(path, mode='a', header=False)
-
-        else: 
+        # only update csv file if latest clone timestamp matches today's date
+        # i.e. there were clones today
+        elif last_download_date == date.today():
             df_latest_clones.to_csv(path, mode='a', header=False)
 
 # convert clone statistics to a data frame
