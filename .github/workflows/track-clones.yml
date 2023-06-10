@@ -3,7 +3,10 @@ on: push
 permissions:
   contents: write
 jobs:
-  test: 
+  track_clones: 
+    strategy: 
+      matrix:
+        repo: [j0ycehe/artoftheweb]
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v3
@@ -18,7 +21,7 @@ jobs:
       - name: Run fetch.py
         env: 
           SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
-        run: python fetch.py j0ycehe/artoftheweb
+        run: python fetch.py ${{ matrix.repo }}
       - name: Commit download statistics
         run: |
           git config --global user.name 'j0ycehe'

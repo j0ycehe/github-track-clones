@@ -1,7 +1,6 @@
 from bokeh.plotting import figure, output_file, show, curdoc
 from bokeh.models import ColumnDataSource, DatetimeTickFormatter, Legend
 from datetime import datetime as dt, timedelta, date
-
 import pandas as pd
 
 output_file('dashboard.html')
@@ -25,9 +24,7 @@ p = figure(width=800, x_axis_type='datetime', toolbar_location="above")
 p.circle(x='date', y='clone_count', source=source, size=10, line_width=2, line_color='#2c79de', fill_color='white')
 line = p.line(x='date', y='clone_count', source=source, color='#2c79de')
 p.xaxis.formatter=DatetimeTickFormatter(days=["%B %d %Y"])
-p.title.text = 'Downloads over time'
-p.xaxis.axis_label = 'Date'
-p.yaxis.axis_label = 'Number of downloads per day'
+p.title.text = 'Cumulative downloads'
 
 legend = Legend(items=[
     ("dataset 1", [line])

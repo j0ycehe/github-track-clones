@@ -59,7 +59,7 @@ def fetch_clones(repo):
 # get owner name and repo name
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Requires the environment variables REPO and SECRET_TOKEN to be set."
+        description="Requires the environment variable SECRET_TOKEN to be set."
     )
 
     parser.add_argument(
