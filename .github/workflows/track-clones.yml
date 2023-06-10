@@ -1,19 +1,15 @@
 name: Track Clones
-
 on: push
 
 jobs:
   test: 
     runs-on: ubuntu-latest
     steps: 
-      - run: echo $REPO
-        env: 
-          REPO: ${{ github.repository }}
       - uses: actions/checkout@v2
       - name: Set up Python version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install dependencies
         run: |
           pip3 install PyGithub
