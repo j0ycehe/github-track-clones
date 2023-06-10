@@ -1,11 +1,12 @@
 name: Track Clones
 on: push
-
+permissions:
+  contents: write
 jobs:
   test: 
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python version
         uses: actions/setup-python@v4
         with:
@@ -22,11 +23,7 @@ jobs:
         run: |
           git config --global user.name 'j0ycehe'
           git config --global user.email 'joycehe@sas.upenn.edu'
-          git add -A
-          git diff-index --quiet HEAD || (git commit -a -m "Update download statistics" --allow-empty)
+          git commit -am "Update download statistics"
       - name: Push download statistics
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main 
+        run: git push
 
