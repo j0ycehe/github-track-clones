@@ -27,10 +27,10 @@ jobs:
           git config --global user.name 'j0ycehe'
           git config --global user.email 'joycehe@sas.upenn.edu'
           git add -A
-          git commit -a -m 'Update download statistics'
+          git diff-index --quiet HEAD || (git commit -a -m "Update download statistics" --allow-empty)
       - name: Push download statistics
         uses: ad-m/github-push-action@v0.6.0
-        with: 
+        with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          branch: main 
 
