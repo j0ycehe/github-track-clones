@@ -5,7 +5,7 @@ import pandas as pd
 
 output_file('dashboard.html')
 
-df = pd.read_csv("clones.csv")
+df = pd.read_csv("download-stats/daily/j0ycehe_artoftheweb_daily_clones.csv")
 df['date'] = pd.to_datetime(df['date'])
 
 # fill in missing dates
@@ -15,7 +15,7 @@ end_date = df['date'].iloc[len(df) - 1]
 delta = timedelta(days=1)
 row = 0
 
-
+df['clone_count'] = df['clone_count'].cumsum()
 source = ColumnDataSource(df)
 
 curdoc().theme = 'light_minimal'
