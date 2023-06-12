@@ -4,7 +4,8 @@ from datetime import datetime as dt, date, timedelta
 from github import Github
 import argparse
 
-# convert data frame to a csv file + output to directory
+# (1) output daily + cumulative download stats for this particular repo to directory
+# (2) add repo's download stats to overall stats encompassing all repos
 def main():
     args = parse_args()
     token = os.environ.get("SECRET_TOKEN")
@@ -22,6 +23,7 @@ def main():
         os.makedirs(os.path.join(stats_dir, cum_dir))
     
     daily_path = os.path.join(stats_dir, daily_dir, f"{owner_name}_{repo_name}_daily_clones.csv")
+    patch_df(df_clones)
     
     if len(df_clones):
         df_latest_clones = df_clones.tail(1)
@@ -53,7 +55,32 @@ def main():
     cum_path = os.path.join(stats_dir, cum_dir, f"{owner_name}_{repo_name}_cum_clones.csv")
     df_cum = pd.read_csv(daily_path)
     df_cum['clone_count'] = df_cum['clone_count'].cumsum()
-    df_cum.to_csv(cum_path, mode='w+')
+    df_cum.to_csv(cum_path, mode='w+', index=False)
+
+    update_overall_cumulative(pd.read_csv("download-stats/cumulative/clones.csv"), os.path.join(stats_dir, cum_dir), "clones")
+
+def update_overall_cumulative(df_add, dir, repo_name):
+    path = os.path.join(dir, "all_repos_cumulative.csv")
+    df_latest_clones = df_add.tail(1)
+    df_add = df_add.rename({"clone_count": repo_name}, axis=1)
+
+    if not os.path.exists(path):
+        df_add.to_csv(path, index=False)
+    elif repo_name in pd.read_csv(path):
+        df_overall = pd.read_csv(path) 
+        if df_latest_clones['date'] in df_overall:
+            df_overall.at[len(df_overall.index), repo_name] = df_latest_clones['clone_count']
+            df_overall.to_csv(path)
+        else:
+            df_latest_clones.to_csv(path, mode='a', header=False, index=False)
+    else: 
+        df_overall = pd.read_csv(path) 
+        df_add = df_add.set_index('date')
+        df_overall = df_overall.set_index('date')
+        
+        df_overall = pd.concat([df_overall, df_add], axis=1).sort_index()
+        df_overall.to_csv(path)
+
 
 # fill in dates where no clones were made with 0's
 def patch_df(df):
@@ -63,10 +90,14 @@ def patch_df(df):
     delta = timedelta(days=1)
 
     while cur_date <= todays_date:
-        if df.index[row].date() != cur_date:
-            missing_clones = pd.DataFrame({"clone_count": [0]}, index=pd.DatetimeIndex(data=[cur_date]))
-            missing_clones.index.name = "date"
+        missing_clones = pd.DataFrame({"clone_count": [0]}, index=pd.DatetimeIndex(data=[cur_date]))
+        missing_clones.index.name = "date"
+
+        if row >= len(df.index):
+            df = pd.concat([df, missing_clones])
+        elif df.index[row].date() != cur_date:
             df = pd.concat([df.iloc[:row], missing_clones, df.iloc[row:]])
+
         row += 1
         cur_date += delta   
     return df        

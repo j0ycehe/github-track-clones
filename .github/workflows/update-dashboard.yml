@@ -1,17 +1,9 @@
-name: Track Clones
-on: 
-  schedule:
-      # Run this once per day, towards the end of the day for keeping the most
-      # recent data point most meaningful (hours are interpreted in UTC).
-      - cron: "0 23 * * *"
-  workflow_dispatch: # Allow for running this manually.
+name: Update Dashboard
+on: workflow_dispatch
 permissions:
   contents: write
 jobs:
   track_clones: 
-    strategy: 
-      matrix:
-        repo: [j0ycehe/artoftheweb]
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v3
@@ -23,16 +15,17 @@ jobs:
         run: |
           pip3 install PyGithub
           python -m pip install --upgrade pip pandas
-      - name: Run fetch.py
+      - name: Run create-graph.py
         env: 
-          SECRET_TOKEN: ${{ secrets.SECRET_TOKEN }}
+          REPOS: ["j0ycehe/artoftheweb"]
         run: python fetch.py ${{ matrix.repo }}
-      - name: Commit download statistics
+      - name: Commit changes
         run: |
           git config --global user.name 'j0ycehe'
           git config --global user.email 'joycehe@sas.upenn.edu'
           git add -A
           git commit -am "Update download statistics"
-      - name: Push download statistics
+      - name: Push changes
         run: git push
+
 
