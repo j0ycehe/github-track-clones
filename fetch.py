@@ -23,7 +23,6 @@ def main():
         os.makedirs(os.path.join(stats_dir, cum_dir))
     
     daily_path = os.path.join(stats_dir, daily_dir, f"{owner_name}_{repo_name}_daily_clones.csv")
-    patch_df(df_clones)
     
     if len(df_clones):
         df_latest_clones = df_clones.tail(1)
@@ -48,37 +47,52 @@ def main():
     # if this script is run for the first time and no clones were made
     # in the past 2 weeks, create a csv storing today's clone count (i.e. 0)
     else:
-        df_todays_clones = pd.DataFrame(data=[0], index=pd.DatetimeIndex(data=[dt.now().date()]))
+        df_todays_clones = pd.DataFrame(data={"clone_count": [0]}, index=pd.DatetimeIndex(data=[dt.now().date()]))
+        df_todays_clones.index.name = "date"
         df_todays_clones.to_csv(daily_path)
 
-    # generate cumulative downloads + output to directory
+    # generate cumulative downloads for this repo + output to directory
     cum_path = os.path.join(stats_dir, cum_dir, f"{owner_name}_{repo_name}_cum_clones.csv")
     df_cum = pd.read_csv(daily_path)
     df_cum['clone_count'] = df_cum['clone_count'].cumsum()
     df_cum.to_csv(cum_path, mode='w+', index=False)
 
-    update_overall_cumulative(pd.read_csv("download-stats/cumulative/clones.csv"), os.path.join(stats_dir, cum_dir), "clones")
+    # update overall cumulative stats across all repos
+    overall_cum_path = os.path.join(stats_dir, cum_dir, "all_repos_cumulative.csv")
+    update_overall_cumulative(df_cum, overall_cum_path, args.repo)
 
-def update_overall_cumulative(df_add, dir, repo_name):
-    path = os.path.join(dir, "all_repos_cumulative.csv")
+def update_overall_cumulative(df_add, path, repo_name):
     df_latest_clones = df_add.tail(1)
+    todays_date = df_latest_clones.iat[0, 0]
+    todays_clone_count = df_latest_clones.iloc[0, 1]
     df_add = df_add.rename({"clone_count": repo_name}, axis=1)
 
     if not os.path.exists(path):
+        df_add.insert(loc = 1, column = "overall", value = df_add[repo_name])
         df_add.to_csv(path, index=False)
+    
+    # if column for this repo already exists in csv
     elif repo_name in pd.read_csv(path):
         df_overall = pd.read_csv(path) 
-        if df_latest_clones['date'] in df_overall:
-            df_overall.at[len(df_overall.index), repo_name] = df_latest_clones['clone_count']
-            df_overall.to_csv(path)
+        # if csv already contains row for today
+        if todays_date in df_overall['date'].values:
+            df_overall.at[len(df_overall.index) - 1, repo_name] = todays_clone_count
+            df_overall.at[len(df_overall.index) - 1, "overall"] += todays_clone_count
+            df_overall.to_csv(path, index=False)
         else:
-            df_latest_clones.to_csv(path, mode='a', header=False, index=False)
+            df_new_row = pd.DataFrame(columns=list(df_overall))
+            df_new_row.at[0, "date"] = todays_date
+            df_new_row.at[0, repo_name] = todays_clone_count
+            df_new_row.at[0, "overall"] = todays_clone_count
+            df_new_row.to_csv(path, mode='a', header=False, index=False)
     else: 
         df_overall = pd.read_csv(path) 
         df_add = df_add.set_index('date')
         df_overall = df_overall.set_index('date')
         
         df_overall = pd.concat([df_overall, df_add], axis=1).sort_index()
+        df_overall.fillna(0, inplace=True)
+        df_overall['overall'] += df_overall[repo_name]
         df_overall.to_csv(path)
 
 
