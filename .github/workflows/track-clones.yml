@@ -11,7 +11,7 @@ jobs:
   track_clones: 
     strategy: 
       matrix:
-        repo: [j0ycehe/artoftheweb]
+        repo: [j0ycehe/artoftheweb, j0ycehe/j0ycehe.github.io]
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v3

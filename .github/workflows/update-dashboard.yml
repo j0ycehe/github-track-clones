@@ -1,5 +1,10 @@
 name: Update Dashboard
-on: workflow_dispatch
+on: 
+  schedule:
+      # Run this once per day, towards the end of the day for keeping the most
+      # recent data point most meaningful (hours are interpreted in UTC).
+      - cron: "0 23 * * *"
+  workflow_dispatch: # Allow for running this manually.
 permissions:
   contents: write
 jobs:
@@ -17,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip pandas
       - name: Run create-graph.py
         env: 
-          REPOS: ["j0ycehe/artoftheweb"]
+          REPOS: ["j0ycehe/artoftheweb", "j0ycehe/j0ycehe.github.io"]
         run: python fetch.py ${{ matrix.repo }}
       - name: Commit changes
         run: |

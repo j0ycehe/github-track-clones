@@ -68,7 +68,7 @@ def update_overall_cumulative(df_add, path, repo_name):
     df_add = df_add.rename({"clone_count": repo_name}, axis=1)
 
     if not os.path.exists(path):
-        df_add.insert(loc = 1, column = "overall", value = df_add[repo_name])
+        df_add.insert(loc = 1, column = "Overall", value = df_add[repo_name])
         df_add.to_csv(path, index=False)
     
     # if column for this repo already exists in csv
@@ -77,13 +77,13 @@ def update_overall_cumulative(df_add, path, repo_name):
         # if csv already contains row for today
         if todays_date in df_overall['date'].values:
             df_overall.at[len(df_overall.index) - 1, repo_name] = todays_clone_count
-            df_overall.at[len(df_overall.index) - 1, "overall"] += todays_clone_count
+            df_overall.at[len(df_overall.index) - 1, "Overall"] += todays_clone_count
             df_overall.to_csv(path, index=False)
         else:
             df_new_row = pd.DataFrame(columns=list(df_overall))
             df_new_row.at[0, "date"] = todays_date
             df_new_row.at[0, repo_name] = todays_clone_count
-            df_new_row.at[0, "overall"] = todays_clone_count
+            df_new_row.at[0, "Overall"] = todays_clone_count
             df_new_row.to_csv(path, mode='a', header=False, index=False)
     else: 
         df_overall = pd.read_csv(path) 
