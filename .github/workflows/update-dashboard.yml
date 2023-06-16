@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
 jobs:
-  track_clones: 
+  update_dashboard: 
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v3
@@ -21,8 +21,6 @@ jobs:
           pip3 install PyGithub
           python -m pip install --upgrade pip pandas
       - name: Run create-graph.py
-        env: 
-          REPOS: ["j0ycehe/artoftheweb", "j0ycehe/j0ycehe.github.io"]
         run: python create-graph.py
       - name: Commit changes
         run: |
