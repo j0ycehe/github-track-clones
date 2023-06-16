@@ -18,7 +18,7 @@ def get_data(source_data, repo):
     df.rename(columns={repo: "stats"}, inplace=True)
     return df
 
-render_cds = ColumnDataSource({"date": df['date'], "stats": df['overall']})
+render_cds = ColumnDataSource({"date": df['date'], "stats": df['Overall']})
 cds = ColumnDataSource(df)
 
 curdoc().theme = 'light_minimal'
