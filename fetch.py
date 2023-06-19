@@ -92,7 +92,7 @@ def update_overall_cumulative(df_add, path, repo_name):
         
         df_overall = pd.concat([df_overall, df_add], axis=1).sort_index()
         df_overall.fillna(0, inplace=True)
-        df_overall['overall'] += df_overall[repo_name]
+        df_overall['Overall'] += df_overall[repo_name]
         df_overall.to_csv(path)
 
 
