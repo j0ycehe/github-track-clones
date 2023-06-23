@@ -36,5 +36,7 @@ jobs:
           git add -A
           git commit -am "Update download statistics"
       - name: Push download statistics
-        run: git push
+        run: |
+          git pull --rebase
+          git push
 
